@@ -1,0 +1,56 @@
+Model: "Parallel_CNN_LSTM"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ input_2 (InputLayer)           [(None, 10, 29)]     0           []                               
+                                                                                                  
+ s1_conv1d_1 (Conv1D)           (None, 10, 64)       5632        ['input_2[0][0]']                
+                                                                                                  
+ s2_conv1d_1 (Conv1D)           (None, 10, 64)       9344        ['input_2[0][0]']                
+                                                                                                  
+ s1_bn_1 (BatchNormalization)   (None, 10, 64)       256         ['s1_conv1d_1[0][0]']            
+                                                                                                  
+ s2_bn_1 (BatchNormalization)   (None, 10, 64)       256         ['s2_conv1d_1[0][0]']            
+                                                                                                  
+ s1_maxpool_1 (MaxPooling1D)    (None, 5, 64)        0           ['s1_bn_1[0][0]']                
+                                                                                                  
+ s2_maxpool_1 (MaxPooling1D)    (None, 5, 64)        0           ['s2_bn_1[0][0]']                
+                                                                                                  
+ s1_dropout_1 (Dropout)         (None, 5, 64)        0           ['s1_maxpool_1[0][0]']           
+                                                                                                  
+ s2_dropout_1 (Dropout)         (None, 5, 64)        0           ['s2_maxpool_1[0][0]']           
+                                                                                                  
+ s1_lstm_1 (LSTM)               (None, 5, 128)       98816       ['s1_dropout_1[0][0]']           
+                                                                                                  
+ s2_lstm_1 (LSTM)               (None, 5, 128)       98816       ['s2_dropout_1[0][0]']           
+                                                                                                  
+ s1_dropout_2 (Dropout)         (None, 5, 128)       0           ['s1_lstm_1[0][0]']              
+                                                                                                  
+ s2_dropout_2 (Dropout)         (None, 5, 128)       0           ['s2_lstm_1[0][0]']              
+                                                                                                  
+ s1_lstm_2 (LSTM)               (None, 64)           49408       ['s1_dropout_2[0][0]']           
+                                                                                                  
+ s2_lstm_2 (LSTM)               (None, 64)           49408       ['s2_dropout_2[0][0]']           
+                                                                                                  
+ s1_dropout_3 (Dropout)         (None, 64)           0           ['s1_lstm_2[0][0]']              
+                                                                                                  
+ s2_dropout_3 (Dropout)         (None, 64)           0           ['s2_lstm_2[0][0]']              
+                                                                                                  
+ concat (Concatenate)           (None, 128)          0           ['s1_dropout_3[0][0]',           
+                                                                  's2_dropout_3[0][0]']           
+                                                                                                  
+ dense_1 (Dense)                (None, 128)          16512       ['concat[0][0]']                 
+                                                                                                  
+ dropout_final_1 (Dropout)      (None, 128)          0           ['dense_1[0][0]']                
+                                                                                                  
+ dense_2 (Dense)                (None, 64)           8256        ['dropout_final_1[0][0]']        
+                                                                                                  
+ dropout_final_2 (Dropout)      (None, 64)           0           ['dense_2[0][0]']                
+                                                                                                  
+ output (Dense)                 (None, 3)            195         ['dropout_final_2[0][0]']        
+                                                                                                  
+==================================================================================================
+Total params: 336,899
+Trainable params: 336,643
+Non-trainable params: 256
+__________________________________________________________________________________________________

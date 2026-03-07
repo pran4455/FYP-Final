@@ -1,0 +1,15 @@
+start,end,label
+0.0,300.0,medium
+300.0,600.0,medium
+600.0,900.0,medium
+900.0,1200.0,medium
+1200.0,1500.0,medium
+1500.0,1800.0,medium
+1800.0,2100.0,medium
+2100.0,2400.0,medium
+2400.0,2700.0,medium
+2700.0,3000.0,medium
+3000.0,3300.0,medium
+3300.0,3600.0,medium
+3600.0,3900.0,medium
+3900.0,4200.0,medium

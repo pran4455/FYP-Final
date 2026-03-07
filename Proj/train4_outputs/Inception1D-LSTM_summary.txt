@@ -1,0 +1,79 @@
+Model: "Inception1D_LSTM"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ input_4 (InputLayer)           [(None, 10, 29)]     0           []                               
+                                                                                                  
+ init_conv (Conv1D)             (None, 10, 32)       6528        ['input_4[0][0]']                
+                                                                                                  
+ init_bn (BatchNormalization)   (None, 10, 32)       128         ['init_conv[0][0]']              
+                                                                                                  
+ inc1_b2_conv1 (Conv1D)         (None, 10, 32)       1056        ['init_bn[0][0]']                
+                                                                                                  
+ inc1_b3_conv1 (Conv1D)         (None, 10, 32)       1056        ['init_bn[0][0]']                
+                                                                                                  
+ inc1_b4_pool (MaxPooling1D)    (None, 10, 32)       0           ['init_bn[0][0]']                
+                                                                                                  
+ inc1_b1_conv (Conv1D)          (None, 10, 32)       1056        ['init_bn[0][0]']                
+                                                                                                  
+ inc1_b2_conv2 (Conv1D)         (None, 10, 32)       3104        ['inc1_b2_conv1[0][0]']          
+                                                                                                  
+ inc1_b3_conv2 (Conv1D)         (None, 10, 32)       5152        ['inc1_b3_conv1[0][0]']          
+                                                                                                  
+ inc1_b4_conv (Conv1D)          (None, 10, 32)       1056        ['inc1_b4_pool[0][0]']           
+                                                                                                  
+ inc1_concat (Concatenate)      (None, 10, 128)      0           ['inc1_b1_conv[0][0]',           
+                                                                  'inc1_b2_conv2[0][0]',          
+                                                                  'inc1_b3_conv2[0][0]',          
+                                                                  'inc1_b4_conv[0][0]']           
+                                                                                                  
+ inc1_bn (BatchNormalization)   (None, 10, 128)      512         ['inc1_concat[0][0]']            
+                                                                                                  
+ maxpool_1 (MaxPooling1D)       (None, 5, 128)       0           ['inc1_bn[0][0]']                
+                                                                                                  
+ inc2_b2_conv1 (Conv1D)         (None, 5, 64)        8256        ['maxpool_1[0][0]']              
+                                                                                                  
+ inc2_b3_conv1 (Conv1D)         (None, 5, 64)        8256        ['maxpool_1[0][0]']              
+                                                                                                  
+ inc2_b4_pool (MaxPooling1D)    (None, 5, 128)       0           ['maxpool_1[0][0]']              
+                                                                                                  
+ inc2_b1_conv (Conv1D)          (None, 5, 64)        8256        ['maxpool_1[0][0]']              
+                                                                                                  
+ inc2_b2_conv2 (Conv1D)         (None, 5, 64)        12352       ['inc2_b2_conv1[0][0]']          
+                                                                                                  
+ inc2_b3_conv2 (Conv1D)         (None, 5, 64)        20544       ['inc2_b3_conv1[0][0]']          
+                                                                                                  
+ inc2_b4_conv (Conv1D)          (None, 5, 64)        8256        ['inc2_b4_pool[0][0]']           
+                                                                                                  
+ inc2_concat (Concatenate)      (None, 5, 256)       0           ['inc2_b1_conv[0][0]',           
+                                                                  'inc2_b2_conv2[0][0]',          
+                                                                  'inc2_b3_conv2[0][0]',          
+                                                                  'inc2_b4_conv[0][0]']           
+                                                                                                  
+ inc2_bn (BatchNormalization)   (None, 5, 256)       1024        ['inc2_concat[0][0]']            
+                                                                                                  
+ maxpool_2 (MaxPooling1D)       (None, 2, 256)       0           ['inc2_bn[0][0]']                
+                                                                                                  
+ lstm_1 (LSTM)                  (None, 2, 128)       197120      ['maxpool_2[0][0]']              
+                                                                                                  
+ dropout_lstm_1 (Dropout)       (None, 2, 128)       0           ['lstm_1[0][0]']                 
+                                                                                                  
+ lstm_2 (LSTM)                  (None, 64)           49408       ['dropout_lstm_1[0][0]']         
+                                                                                                  
+ dropout_lstm_2 (Dropout)       (None, 64)           0           ['lstm_2[0][0]']                 
+                                                                                                  
+ dense_1 (Dense)                (None, 128)          8320        ['dropout_lstm_2[0][0]']         
+                                                                                                  
+ dropout_1 (Dropout)            (None, 128)          0           ['dense_1[0][0]']                
+                                                                                                  
+ dense_2 (Dense)                (None, 64)           8256        ['dropout_1[0][0]']              
+                                                                                                  
+ dropout_2 (Dropout)            (None, 64)           0           ['dense_2[0][0]']                
+                                                                                                  
+ output (Dense)                 (None, 3)            195         ['dropout_2[0][0]']              
+                                                                                                  
+==================================================================================================
+Total params: 349,891
+Trainable params: 349,059
+Non-trainable params: 832
+__________________________________________________________________________________________________

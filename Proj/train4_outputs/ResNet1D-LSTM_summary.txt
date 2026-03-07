@@ -1,0 +1,101 @@
+Model: "ResNet1D_LSTM"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ input_3 (InputLayer)           [(None, 10, 29)]     0           []                               
+                                                                                                  
+ init_conv (Conv1D)             (None, 10, 32)       6528        ['input_3[0][0]']                
+                                                                                                  
+ init_bn (BatchNormalization)   (None, 10, 32)       128         ['init_conv[0][0]']              
+                                                                                                  
+ res1_conv1 (Conv1D)            (None, 10, 64)       6208        ['init_bn[0][0]']                
+                                                                                                  
+ res1_bn1 (BatchNormalization)  (None, 10, 64)       256         ['res1_conv1[0][0]']             
+                                                                                                  
+ res1_dropout1 (Dropout)        (None, 10, 64)       0           ['res1_bn1[0][0]']               
+                                                                                                  
+ res1_conv2 (Conv1D)            (None, 10, 64)       12352       ['res1_dropout1[0][0]']          
+                                                                                                  
+ res1_bn2 (BatchNormalization)  (None, 10, 64)       256         ['res1_conv2[0][0]']             
+                                                                                                  
+ res1_shortcut (Conv1D)         (None, 10, 64)       2112        ['init_bn[0][0]']                
+                                                                                                  
+ res1_add (Add)                 (None, 10, 64)       0           ['res1_bn2[0][0]',               
+                                                                  'res1_shortcut[0][0]']          
+                                                                                                  
+ res1_relu (Activation)         (None, 10, 64)       0           ['res1_add[0][0]']               
+                                                                                                  
+ res2_conv1 (Conv1D)            (None, 10, 64)       12352       ['res1_relu[0][0]']              
+                                                                                                  
+ res2_bn1 (BatchNormalization)  (None, 10, 64)       256         ['res2_conv1[0][0]']             
+                                                                                                  
+ res2_dropout1 (Dropout)        (None, 10, 64)       0           ['res2_bn1[0][0]']               
+                                                                                                  
+ res2_conv2 (Conv1D)            (None, 10, 64)       12352       ['res2_dropout1[0][0]']          
+                                                                                                  
+ res2_bn2 (BatchNormalization)  (None, 10, 64)       256         ['res2_conv2[0][0]']             
+                                                                                                  
+ res2_add (Add)                 (None, 10, 64)       0           ['res2_bn2[0][0]',               
+                                                                  'res1_relu[0][0]']              
+                                                                                                  
+ res2_relu (Activation)         (None, 10, 64)       0           ['res2_add[0][0]']               
+                                                                                                  
+ maxpool_1 (MaxPooling1D)       (None, 5, 64)        0           ['res2_relu[0][0]']              
+                                                                                                  
+ res3_conv1 (Conv1D)            (None, 5, 128)       24704       ['maxpool_1[0][0]']              
+                                                                                                  
+ res3_bn1 (BatchNormalization)  (None, 5, 128)       512         ['res3_conv1[0][0]']             
+                                                                                                  
+ res3_dropout1 (Dropout)        (None, 5, 128)       0           ['res3_bn1[0][0]']               
+                                                                                                  
+ res3_conv2 (Conv1D)            (None, 5, 128)       49280       ['res3_dropout1[0][0]']          
+                                                                                                  
+ res3_bn2 (BatchNormalization)  (None, 5, 128)       512         ['res3_conv2[0][0]']             
+                                                                                                  
+ res3_shortcut (Conv1D)         (None, 5, 128)       8320        ['maxpool_1[0][0]']              
+                                                                                                  
+ res3_add (Add)                 (None, 5, 128)       0           ['res3_bn2[0][0]',               
+                                                                  'res3_shortcut[0][0]']          
+                                                                                                  
+ res3_relu (Activation)         (None, 5, 128)       0           ['res3_add[0][0]']               
+                                                                                                  
+ res4_conv1 (Conv1D)            (None, 5, 128)       49280       ['res3_relu[0][0]']              
+                                                                                                  
+ res4_bn1 (BatchNormalization)  (None, 5, 128)       512         ['res4_conv1[0][0]']             
+                                                                                                  
+ res4_dropout1 (Dropout)        (None, 5, 128)       0           ['res4_bn1[0][0]']               
+                                                                                                  
+ res4_conv2 (Conv1D)            (None, 5, 128)       49280       ['res4_dropout1[0][0]']          
+                                                                                                  
+ res4_bn2 (BatchNormalization)  (None, 5, 128)       512         ['res4_conv2[0][0]']             
+                                                                                                  
+ res4_add (Add)                 (None, 5, 128)       0           ['res4_bn2[0][0]',               
+                                                                  'res3_relu[0][0]']              
+                                                                                                  
+ res4_relu (Activation)         (None, 5, 128)       0           ['res4_add[0][0]']               
+                                                                                                  
+ maxpool_2 (MaxPooling1D)       (None, 2, 128)       0           ['res4_relu[0][0]']              
+                                                                                                  
+ lstm_1 (LSTM)                  (None, 2, 128)       131584      ['maxpool_2[0][0]']              
+                                                                                                  
+ dropout_lstm_1 (Dropout)       (None, 2, 128)       0           ['lstm_1[0][0]']                 
+                                                                                                  
+ lstm_2 (LSTM)                  (None, 64)           49408       ['dropout_lstm_1[0][0]']         
+                                                                                                  
+ dropout_lstm_2 (Dropout)       (None, 64)           0           ['lstm_2[0][0]']                 
+                                                                                                  
+ dense_1 (Dense)                (None, 128)          8320        ['dropout_lstm_2[0][0]']         
+                                                                                                  
+ dropout_1 (Dropout)            (None, 128)          0           ['dense_1[0][0]']                
+                                                                                                  
+ dense_2 (Dense)                (None, 64)           8256        ['dropout_1[0][0]']              
+                                                                                                  
+ dropout_2 (Dropout)            (None, 64)           0           ['dense_2[0][0]']                
+                                                                                                  
+ output (Dense)                 (None, 3)            195         ['dropout_2[0][0]']              
+                                                                                                  
+==================================================================================================
+Total params: 433,731
+Trainable params: 432,131
+Non-trainable params: 1,600
+__________________________________________________________________________________________________

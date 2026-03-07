@@ -1,0 +1,141 @@
+<svg viewBox="0 0 1150 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .data-box { fill: #4A90E2; stroke: #2C5AA0; stroke-width: 2; }
+      .process-box { fill: #50C878; stroke: #228B22; stroke-width: 2; }
+      .model-box { fill: #FF6B6B; stroke: #DC143C; stroke-width: 2; }
+      .eval-box { fill: #9B59B6; stroke: #663399; stroke-width: 2; }
+      .output-box { fill: #F39C12; stroke: #D68910; stroke-width: 2; }
+      .text { font-family: Arial, sans-serif; font-size: 11px; text-anchor: middle; fill: white; font-weight: bold; }
+      .title-text { font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; text-anchor: middle; fill: white; }
+      .main-title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; fill: #2C3E50; }
+      .subtitle { font-family: Arial, sans-serif; font-size: 12px; text-anchor: middle; fill: #7F8C8D; }
+      .arrow { stroke: #2C3E50; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .bullet { font-family: Arial, sans-serif; font-size: 10px; text-anchor: start; fill: white; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2C3E50" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="575" y="30" class="main-title">Multimodal Stress Detection System</text>
+  <text x="575" y="50" class="subtitle">Architecture Diagram</text>
+
+  <!-- Data Acquisition -->
+  <rect x="50" y="80" width="170" height="80" class="data-box" rx="8"/>
+  <text x="135" y="105" class="title-text">Data Acquisition</text>
+  <text x="60" y="125" class="bullet">• ECG</text>
+  <text x="60" y="138" class="bullet">• EMG</text>
+  <text x="60" y="151" class="bullet">• Heart Rate (HR)</text>
+  <text x="135" y="125" class="bullet">• GSR (Hand/Foot)</text>
+  <text x="135" y="138" class="bullet">• Respiration</text>
+
+  <!-- Arrow to Signal Processing -->
+  <path class="arrow" d="M 220 120 L 310 120"/>
+  <text x="265" y="110" class="subtitle">Signal Data</text>
+
+  <!-- Signal Processing -->
+  <rect x="310" y="80" width="170" height="80" class="data-box" rx="8"/>
+  <text x="395" y="105" class="title-text">Signal Processing</text>
+  <text x="320" y="125" class="bullet">• Noise Filtering</text>
+  <text x="320" y="138" class="bullet">• Artifact Removal</text>
+  <text x="320" y="151" class="bullet">• Signal Synchronization</text>
+
+  <!-- Arrow to Feature Extraction -->
+  <path class="arrow" d="M 480 120 L 570 120"/>
+
+  <!-- Feature Extraction -->
+  <rect x="570" y="80" width="170" height="80" class="data-box" rx="8"/>
+  <text x="655" y="105" class="title-text">Feature Extraction</text>
+  <text x="580" y="125" class="bullet">• Statistical Features</text>
+  <text x="580" y="138" class="bullet">• Time Domain</text>
+  <text x="580" y="151" class="bullet">• Frequency Domain</text>
+
+  <!-- Arrow to Dataset Creation -->
+  <path class="arrow" d="M 740 120 L 830 120"/>
+
+  <!-- Dataset Creation -->
+  <rect x="830" y="80" width="170" height="80" class="data-box" rx="8"/>
+  <text x="915" y="105" class="title-text">Feature Engineering</text>
+  <text x="840" y="125" class="bullet">• Feature DataFrame</text>
+  <text x="840" y="138" class="bullet">• Label Assignment</text>
+  <text x="840" y="151" class="bullet">• Data Concatenation</text>
+
+  <!-- Arrow down to Data Splitting -->
+  <path class="arrow" d="M 915 160 L 915 210"/>
+  <text x="965" y="185" class="subtitle">Complete Dataset</text>
+
+  <!-- Data Splitting -->
+  <rect x="830" y="210" width="170" height="80" class="process-box" rx="8"/>
+  <text x="915" y="235" class="title-text">Data Splitting</text>
+  <text x="840" y="255" class="bullet">• Train-Test Split</text>
+  <text x="840" y="268" class="bullet">• 80% Train, 20% Test</text>
+  <text x="840" y="281" class="bullet">• Random State=42</text>
+
+  <!-- Arrow to Model Evaluation -->
+  <path class="arrow" d="M 830 250 L 740 250"/>
+  <text x="785" y="240" class="subtitle">Training Data</text>
+
+  <!-- Model Evaluation -->
+  <rect x="580" y="210" width="160" height="80" class="process-box" rx="8"/>
+  <text x="655" y="235" class="title-text">Model Training</text>
+  <text x="590" y="255" class="bullet">• Multimodal Fusion</text>
+  <text x="590" y="268" class="bullet">• Deep Learning Model</text>
+  <text x="590" y="281" class="bullet">• Stress Classification</text>
+
+  <!-- Arrow to Model Training -->
+  <path class="arrow" d="M 580 250 L 500 250"/>
+  <text x="545" y="240" class="subtitle">Test Data</text>
+
+  <!-- Model Training -->
+  <rect x="322" y="210" width="175" height="80" class="model-box" rx="8"/>
+  <text x="410" y="235" class="title-text">Model Evaluation</text>
+  <text x="330" y="255" class="bullet">• Prediction on Test Set</text>
+  <text x="330" y="268" class="bullet">• Classification Report</text>
+  <text x="330" y="281" class="bullet">• Precision, Recall, F1</text>
+
+  <!-- Arrow down to Real-time Inference -->
+  <path class="arrow" d="M 410 290 L 410 360"/>
+  <text x="460" y="325" class="subtitle">Trained Model</text>
+
+  <!-- Real-time Inference -->
+  <rect x="324" y="360" width="177" height="80" class="model-box" rx="8"/>
+  <text x="410" y="385" class="title-text">Real-time Inference</text>
+  <text x="330" y="405" class="bullet">• Live Data Processing</text>
+  <text x="330" y="418" class="bullet">• Stress Level Prediction</text>
+  <text x="330" y="431" class="bullet">• Continuous Monitoring</text>
+
+  <!-- Arrow to Stress Classification -->
+  <path class="arrow" d="M 323 400 L 230 400"/>
+  <text x="275" y="390" class="subtitle">Stress Prediction</text>
+
+  <!-- Stress Classification -->
+  <rect x="40" y="360" width="190" height="80" class="output-box" rx="8"/>
+  <text x="135" y="385" class="title-text">Stress Classification</text>
+  <text x="50" y="405" class="bullet">• Low Stress</text>
+  <text x="50" y="418" class="bullet">• Medium Stress</text>
+  <text x="50" y="431" class="bullet">• High Stress</text>
+
+  <!-- Arrow down to LLM Interface -->
+  <path class="arrow" d="M 135 440 L 135 490"/>
+  <text x="175" y="465" class="subtitle">Stress Level</text>
+
+  <!-- LLM Interface -->
+  <rect x="40" y="490" width="190" height="80" class="eval-box" rx="8"/>
+  <text x="135" y="515" class="title-text">LLM Interface</text>
+  <text x="50" y="535" class="bullet">• Context Analysis</text>
+  <text x="50" y="548" class="bullet">• Empathetic Response</text>
+  <text x="50" y="561" class="bullet">• Adaptive Feedback</text>
+
+  <!-- Arrow to Driver Feedback -->
+  <path class="arrow" d="M 230 530 L 320 530"/>
+  <text x="275" y="520" class="subtitle">LLM Response</text>
+
+  <!-- Driver Feedback -->
+  <rect x="320" y="490" width="180" height="80" class="output-box" rx="8"/>
+  <text x="410" y="515" class="title-text">Driver Feedback</text>
+  <text x="330" y="535" class="bullet">• Voice Assistant</text>
+  <text x="330" y="548" class="bullet">• Calming Suggestions</text>
+  <text x="330" y="561" class="bullet">• Safety Alerts</text>
+</svg>

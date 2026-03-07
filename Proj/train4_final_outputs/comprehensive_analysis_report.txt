@@ -1,0 +1,56 @@
+================================================================================
+COMPREHENSIVE MODEL ANALYSIS REPORT
+Driver Stress Detection - Advanced Deep Learning Models
+================================================================================
+
+Analysis Date: 2025-11-19 14:28:11.118517
+Test Set Size: 38 samples
+Number of Models: 6
+Number of Classes: 3
+
+================================================================================
+PERFORMANCE METRICS SUMMARY
+================================================================================
+
+               Model  Accuracy  F1-Score  Precision   Recall      AUC
+          BEST_MODEL  0.973684  0.973584   0.975709 0.973684 1.000000
+CNN-BiLSTM-Attention  0.842105  0.835088   0.861842 0.842105 0.989879
+   CNN-GRU-Attention  0.921053  0.920424   0.926746 0.921053 0.978970
+    Inception1D-LSTM  0.894737  0.893750   0.900929 0.894737 0.976083
+   Parallel-CNN-LSTM  0.921053  0.920424   0.926746 0.921053 0.978033
+       ResNet1D-LSTM  0.842105  0.836573   0.837771 0.842105 0.982943
+
+================================================================================
+BEST PERFORMING MODELS BY METRIC
+================================================================================
+
+Accuracy       : BEST_MODEL                     (0.9737)
+F1-Score       : BEST_MODEL                     (0.9736)
+Precision      : BEST_MODEL                     (0.9757)
+Recall         : BEST_MODEL                     (0.9737)
+AUC            : BEST_MODEL                     (1.0000)
+
+================================================================================
+MODEL PARAMETERS COMPARISON
+================================================================================
+
+BEST_MODEL                    : 550,788 parameters
+CNN-BiLSTM-Attention          : 550,788 parameters
+CNN-GRU-Attention             : 217,796 parameters
+Inception1D-LSTM              : 349,891 parameters
+Parallel-CNN-LSTM             : 336,899 parameters
+ResNet1D-LSTM                 : 433,731 parameters
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+Best Overall Model: BEST_MODEL
+- Highest F1-Score: 0.9736
+- Balanced performance across all metrics
+- Recommended for production deployment
+
+Most Efficient Model: CNN-GRU-Attention
+- Parameters: 217,796
+- F1-Score: 0.9204
+- Recommended for edge/mobile deployment

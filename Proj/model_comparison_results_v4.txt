@@ -1,0 +1,93 @@
+GPU-Optimized Driver Stress Detection - Architecture Comparison
+Timestamp: 2025-11-18 22:18:05.465855
+GPU Used: Yes (RTX 4060)
+================================================================================
+
+CNN-BiLSTM-Attention
+========================================
+Accuracy: 0.9474
+F1-Score: 0.9468
+
+Classification Report:
+                precision    recall  f1-score   support
+
+Stress_Level_0       1.00      1.00      1.00        15
+Stress_Level_1       1.00      0.82      0.90        11
+Stress_Level_2       0.86      1.00      0.92        12
+
+      accuracy                           0.95        38
+     macro avg       0.95      0.94      0.94        38
+  weighted avg       0.95      0.95      0.95        38
+
+
+Parallel-CNN-LSTM
+========================================
+Accuracy: 0.9211
+F1-Score: 0.9204
+
+Classification Report:
+                precision    recall  f1-score   support
+
+Stress_Level_0       0.94      1.00      0.97        15
+Stress_Level_1       1.00      0.82      0.90        11
+Stress_Level_2       0.85      0.92      0.88        12
+
+      accuracy                           0.92        38
+     macro avg       0.93      0.91      0.92        38
+  weighted avg       0.93      0.92      0.92        38
+
+
+ResNet1D-LSTM
+========================================
+Accuracy: 0.9211
+F1-Score: 0.9192
+
+Classification Report:
+                precision    recall  f1-score   support
+
+Stress_Level_0       1.00      1.00      1.00        15
+Stress_Level_1       1.00      0.73      0.84        11
+Stress_Level_2       0.80      1.00      0.89        12
+
+      accuracy                           0.92        38
+     macro avg       0.93      0.91      0.91        38
+  weighted avg       0.94      0.92      0.92        38
+
+
+Inception1D-LSTM
+========================================
+Accuracy: 0.9211
+F1-Score: 0.9204
+
+Classification Report:
+                precision    recall  f1-score   support
+
+Stress_Level_0       0.94      1.00      0.97        15
+Stress_Level_1       1.00      0.82      0.90        11
+Stress_Level_2       0.85      0.92      0.88        12
+
+      accuracy                           0.92        38
+     macro avg       0.93      0.91      0.92        38
+  weighted avg       0.93      0.92      0.92        38
+
+
+CNN-GRU-Attention
+========================================
+Accuracy: 0.9474
+F1-Score: 0.9468
+
+Classification Report:
+                precision    recall  f1-score   support
+
+Stress_Level_0       1.00      1.00      1.00        15
+Stress_Level_1       1.00      0.82      0.90        11
+Stress_Level_2       0.86      1.00      0.92        12
+
+      accuracy                           0.95        38
+     macro avg       0.95      0.94      0.94        38
+  weighted avg       0.95      0.95      0.95        38
+
+
+
+Best Model: CNN-BiLSTM-Attention
+Best Accuracy: 0.9474

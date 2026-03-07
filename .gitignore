@@ -1,0 +1,13 @@
+Proj/dataset/
+Proj/llm/llama.cpp/
+Proj/__pycache__/
+Proj/llm/phi3-driver.gguf
+*.gguf
+*.pt
+*.bin
+*.ckpt
+*.zip
+*.tar
+*.h5
+*.joblib
+*.safetensors

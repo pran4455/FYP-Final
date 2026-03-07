@@ -1,0 +1,52 @@
+Model: "CNN_BiLSTM_Attention"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_1 (InputLayer)        [(None, 10, 29)]          0         
+                                                                 
+ conv1d_1 (Conv1D)           (None, 10, 64)            5632      
+                                                                 
+ bn_1 (BatchNormalization)   (None, 10, 64)            256       
+                                                                 
+ dropout_1 (Dropout)         (None, 10, 64)            0         
+                                                                 
+ conv1d_2 (Conv1D)           (None, 10, 128)           24704     
+                                                                 
+ bn_2 (BatchNormalization)   (None, 10, 128)           512       
+                                                                 
+ maxpool_1 (MaxPooling1D)    (None, 5, 128)            0         
+                                                                 
+ dropout_2 (Dropout)         (None, 5, 128)            0         
+                                                                 
+ bilstm_1 (Bidirectional)    (None, 5, 256)            263168    
+                                                                 
+ bn_3 (BatchNormalization)   (None, 5, 256)            1024      
+                                                                 
+ dropout_3 (Dropout)         (None, 5, 256)            0         
+                                                                 
+ bilstm_2 (Bidirectional)    (None, 5, 128)            164352    
+                                                                 
+ bn_4 (BatchNormalization)   (None, 5, 128)            512       
+                                                                 
+ dropout_4 (Dropout)         (None, 5, 128)            0         
+                                                                 
+ attention (AttentionLayer)  ((None, 5, 128),          129       
+                              (None, 5, 1))                      
+                                                                 
+ flatten (Flatten)           (None, 640)               0         
+                                                                 
+ dense_1 (Dense)             (None, 128)               82048     
+                                                                 
+ dropout_5 (Dropout)         (None, 128)               0         
+                                                                 
+ dense_2 (Dense)             (None, 64)                8256      
+                                                                 
+ dropout_6 (Dropout)         (None, 64)                0         
+                                                                 
+ output (Dense)              (None, 3)                 195       
+                                                                 
+=================================================================
+Total params: 550,788
+Trainable params: 549,636
+Non-trainable params: 1,152
+_________________________________________________________________
