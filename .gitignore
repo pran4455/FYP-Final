@@ -8,6 +8,4 @@ Proj/llm/phi3-driver.gguf
 *.ckpt
 *.zip
 *.tar
-*.h5
-*.joblib
 *.safetensors
