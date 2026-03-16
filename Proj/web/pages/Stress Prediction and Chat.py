@@ -4,12 +4,22 @@ Stress Prediction & Chat — Run CNN-GRU-Attention stress prediction and feed re
 - View prediction (stress level + confidence) and the generic statement sent to the bot.
 - Get a chatbot response based on the predicted stress level.
 """
+import asyncio
+import base64
 import json
 import sys
+import tempfile
+import threading
 from pathlib import Path
 
 import requests
 import streamlit as st
+
+try:
+    import edge_tts
+    TTS_AVAILABLE = True
+except ImportError:
+    TTS_AVAILABLE = False
 
 # Ensure Proj root is on path so we can import pred
 _PROJ_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -36,7 +46,7 @@ except Exception as e:
     _PRED_ERROR = str(e)
 
 OLLAMA_BASE_URL = "http://localhost:11434"
-DEFAULT_MODEL = "driver_stress_ai"
+DEFAULT_MODEL = "driverbot:latest"
 
 st.set_page_config(page_title="Stress Prediction & Chat", layout="wide")
 
@@ -55,13 +65,51 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
-def list_ollama_models(base_url: str):
-    try:
-        r = requests.get(f"{base_url.rstrip('/')}/api/tags", timeout=5)
-        r.raise_for_status()
-        return [m["name"] for m in r.json().get("models", [])]
-    except Exception:
-        return []
+def _tts_to_bytes(text: str, voice: str = "en-US-JennyNeural"):
+    """Synthesize text to MP3 bytes using edge-tts, safe inside Streamlit's event loop."""
+    if not TTS_AVAILABLE or not text.strip():
+        return None
+
+    async def _gen(path):
+        communicate = edge_tts.Communicate(text, voice=voice)
+        await communicate.save(path)
+
+    with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as f:
+        tmp_path = f.name
+
+    result = [None]
+
+    def _run():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            loop.run_until_complete(_gen(tmp_path))
+            with open(tmp_path, "rb") as f:
+                result[0] = f.read()
+        except Exception:
+            pass
+        finally:
+            loop.close()
+
+    t = threading.Thread(target=_run)
+    t.start()
+    t.join()
+    return result[0]
+
+
+def speak_text(text: str, voice: str = "en-US-JennyNeural"):
+    """Generate TTS for the full text and play it."""
+    if not TTS_AVAILABLE or not text or text.strip() in ("[Error]", "[No response]"):
+        return
+    audio_bytes = _tts_to_bytes(text, voice)
+    if audio_bytes:
+        b64 = base64.b64encode(audio_bytes).decode()
+        html = (
+            f'<audio autoplay style="display:none">'
+            f'<source src="data:audio/mp3;base64,{b64}" type="audio/mp3">'
+            f'</audio>'
+        )
+        st.markdown(html, unsafe_allow_html=True)
 
 
 def ollama_chat_stream(base_url: str, model: str, messages: list):
@@ -75,6 +123,9 @@ def ollama_chat_stream(base_url: str, model: str, messages: list):
                     continue
                 try:
                     chunk = json.loads(line)
+                    if "error" in chunk:
+                        yield None
+                        return
                     content = (chunk.get("message") or {}).get("content") or ""
                     if content:
                         yield content
@@ -88,25 +139,25 @@ def ollama_chat_stream(base_url: str, model: str, messages: list):
 
 # ---------- Session state ----------
 if "stress_prediction" not in st.session_state:
-    st.session_state.stress_prediction = None  # { "label", "proba", "true_label", "prompt_sent" }
+    st.session_state.stress_prediction = None
 if "predict_chat_messages" not in st.session_state:
     st.session_state.predict_chat_messages = []
+if "tts_pending" not in st.session_state:
+    st.session_state.tts_pending = None
 
 
 # ---------- Sidebar ----------
 st.sidebar.title("Stress Prediction & Chat")
-base_url = st.sidebar.text_input("Ollama URL", value=OLLAMA_BASE_URL)
-try:
-    models = list_ollama_models(base_url)
-    if models:
-        idx = models.index(DEFAULT_MODEL) if DEFAULT_MODEL in models else 0
-        model_name = st.sidebar.selectbox("Ollama model", models, index=idx)
-    else:
-        model_name = st.sidebar.text_input("Ollama model", value=DEFAULT_MODEL)
-except Exception:
-    model_name = st.sidebar.text_input("Ollama model", value=DEFAULT_MODEL)
+
+model_name = DEFAULT_MODEL
+base_url = OLLAMA_BASE_URL
 
 use_stream = st.sidebar.checkbox("Stream chatbot reply", value=True)
+use_tts = st.sidebar.checkbox(
+    "Read reply aloud (TTS)", value=True,
+    disabled=not TTS_AVAILABLE,
+    help="Requires edge-tts. Install with: pip install edge-tts"
+)
 
 if st.sidebar.button("Clear prediction & chat"):
     st.session_state.stress_prediction = None
@@ -120,6 +171,11 @@ st.title("Stress Prediction & Chat")
 st.markdown(
     "Run the **CNN-GRU-Attention** stress model on physiological data, then send the predicted stress level to the driver stress chatbot for a supportive response."
 )
+
+# Play pending TTS on the render after reply is saved
+if st.session_state.tts_pending:
+    speak_text(st.session_state.tts_pending)
+    st.session_state.tts_pending = None
 
 if not PRED_AVAILABLE:
     st.error(f"Prediction module could not be loaded: {_PRED_ERROR}")
@@ -143,9 +199,8 @@ if load_err:
     st.error(f"Could not load model or artifacts: {load_err}")
     st.stop()
 
-# ---------- List dataset files (Proj + features folder) ----------
+
 def get_dataset_file_options():
-    """Collect CSV files that can be used for prediction: same feature format as training."""
     options = []
     if DEFAULT_CSV.is_file():
         options.append(("stress_features_all.csv (all data)", str(DEFAULT_CSV)))
@@ -163,11 +218,7 @@ def get_dataset_file_options():
 
 
 # ---------- Input source ----------
-source = st.radio(
-    "Data source",
-    ["Dataset file", "Input my data (CSV)"],
-    horizontal=True,
-)
+source = st.radio("Data source", ["Dataset file", "Input my data (CSV)"], horizontal=True)
 
 prediction_made = False
 stress_label = None
@@ -177,13 +228,9 @@ true_label = None
 if source == "Dataset file":
     dataset_options = get_dataset_file_options()
     if not dataset_options:
-        st.warning("No dataset CSV files found in Proj (stress_features_all.csv or Proj/features/*.csv). Use 'Input my data' and upload a CSV.")
+        st.warning("No dataset CSV files found. Use 'Input my data' and upload a CSV.")
     else:
-        selected_label = st.selectbox(
-            "Choose a dataset file",
-            options=[o[0] for o in dataset_options],
-            help="Select which feature CSV to take a 10-row window from for prediction.",
-        )
+        selected_label = st.selectbox("Choose a dataset file", options=[o[0] for o in dataset_options])
         csv_path = next(o[1] for o in dataset_options if o[0] == selected_label)
         try:
             import pandas as pd
@@ -199,7 +246,6 @@ if source == "Dataset file":
                 "Which sample to predict",
                 options=range(len(sample_options)),
                 format_func=lambda i: sample_options[i],
-                help="Each sample is a 10-row window; the model predicts stress for that window.",
             )
             if st.button("Run prediction on selected sample"):
                 with st.spinner("Predicting..."):
@@ -215,14 +261,13 @@ if source == "Dataset file":
                         st.error(str(e))
 
 elif source == "Input my data (CSV)":
-    st.caption("Upload a CSV with the same feature columns as the training data (optional label column is ignored). Need at least 10 rows; last 10 will be used as one sequence.")
+    st.caption("Upload a CSV with the same feature columns as the training data. Need at least 10 rows.")
     uploaded = st.file_uploader("CSV file", type=["csv"])
     if uploaded is not None:
         try:
             import pandas as pd
             df_up = pd.read_csv(uploaded)
             expected = get_feature_columns()
-            # Allow CSV with or without label column
             if df_up.shape[1] == len(expected) + 1 and "label" in df_up.columns:
                 X_up = df_up.iloc[:, :-1]
             elif df_up.shape[1] >= len(expected):
@@ -243,7 +288,7 @@ elif source == "Input my data (CSV)":
         except Exception as e:
             st.error(f"Error reading CSV: {e}")
 
-# ---------- Persist prediction to session (so it survives reruns) ----------
+# ---------- Persist prediction ----------
 if prediction_made and stress_label is not None:
     st.session_state.stress_prediction = {
         "label": stress_label,
@@ -254,7 +299,7 @@ if prediction_made and stress_label is not None:
     }
     st.rerun()
 
-# ---------- Show prediction result and chatbot (when we have a stored prediction) ----------
+# ---------- Show prediction result and chatbot ----------
 last = st.session_state.stress_prediction
 if last and last.get("label") is not None:
     stress_label = last["label"]
@@ -301,7 +346,7 @@ if last and last.get("label") is not None:
             full = []
             for delta in ollama_chat_stream(base_url, model_name, messages):
                 if delta is None:
-                    stream_placeholder.error("Could not reach Ollama. Is it running? Check URL and model name.")
+                    stream_placeholder.error("Could not reach Ollama. Is it running? Check the URL and model name.")
                     reply = "[Error]"
                     break
                 full.append(delta)
@@ -314,7 +359,7 @@ if last and last.get("label") is not None:
                 st.error("Could not reach Ollama. Is it running? Check URL and model name.")
                 reply = "[Error]"
             elif not (reply and reply.strip()):
-                st.warning("Chatbot returned no response. Is Ollama running with the correct model?")
+                st.warning("Chatbot returned no response.")
                 reply = "[No response]"
             else:
                 st.markdown(reply)
@@ -325,9 +370,10 @@ if last and last.get("label") is not None:
         st.session_state.stress_prediction["reply"] = reply
         st.session_state.predict_chat_messages.append({"role": "user", "content": prompt_sent})
         st.session_state.predict_chat_messages.append({"role": "assistant", "content": reply})
-        st.rerun()  # Rerun so "Last prompt" / "Last chatbot reply" and history show
+        if use_tts:
+            st.session_state.tts_pending = reply
+        st.rerun()
 
-    # Show last prompt & reply when we have them (e.g. after rerun)
     if last.get("prompt_sent"):
         st.caption("**Last prompt sent to chatbot:**")
         st.text(last["prompt_sent"])
